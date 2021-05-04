@@ -79,6 +79,10 @@ public class RoomController {
         if (byIdRoom.isPresent()) {
             Room room = byIdRoom.get();
             if (roomDTO.getNumber() != null) {
+                Optional<Room> allByNumberAndHotelId = roomRepository.findAllByNumberAndHotelId(roomDTO.getNumber(), room.getHotel().getId());
+                if (allByNumberAndHotelId.isPresent()) {
+                    return "Hotel: '" + room.getHotel().getName() + "' already have room with number:' " + roomDTO.getNumber() + "' !";
+                }
                 room.setNumber(roomDTO.getNumber());
             }
             if (roomDTO.getFloor() != null) {
