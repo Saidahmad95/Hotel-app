@@ -32,6 +32,7 @@ public class HotelController {
             return "Hotel with name: '" + hotel.getName() + "' already exists !";
         }
         Hotel newHotel = new Hotel(hotel.getName());
+        hotelRepository.save(newHotel);
         return "Hotel with name: '" + hotel.getName() + "' successfully added";
     }
 

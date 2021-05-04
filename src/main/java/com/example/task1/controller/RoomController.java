@@ -72,41 +72,38 @@ public class RoomController {
         return "Hotel with id: '" + hotelId + "' not found !";
     }
 
-
-    @PutMapping(value = "/editRoom/{hotelId}/{roomNumber}")
-    public String editRoom(@PathVariable Integer hotelId, @PathVariable Integer roomNumber, @RequestBody RoomDTO roomDTO) {
-        Optional<Hotel> byIdHotel = hotelRepository.findById(hotelId);
-        if (byIdHotel.isPresent()) {
-            Optional<Room> allByNumberAndHotelId = roomRepository.findAllByNumberAndHotelId(roomNumber, hotelId);
-            if (allByNumberAndHotelId.isPresent()) {
-                boolean b = roomRepository.existsByNumberAndHotelId(roomDTO.getNumber(), hotelId);
-                if (b) {
-                    return "Hotel: '" + byIdHotel.get().getName() + "' already has room with number:'" + roomDTO.getNumber() + "' !";
-                }
-                Room room = allByNumberAndHotelId.get();
+    // Kamchilik bor
+    @PutMapping(value = "/editRoom/{roomId}")
+    public String editRoom(@PathVariable Integer roomId, @RequestBody RoomDTO roomDTO) {
+        Optional<Room> byIdRoom = roomRepository.findById(roomId);
+        if (byIdRoom.isPresent()) {
+            Room room = byIdRoom.get();
+            if (roomDTO.getNumber() != null) {
                 room.setNumber(roomDTO.getNumber());
-                room.setFloor(roomDTO.getFloor());
-                room.setSize(roomDTO.getSize());
-                roomRepository.save(room);
-                return "'" + byIdHotel.get().getName() + "' hotel's room with old number: '" + roomNumber + "' successfully edited !";
             }
-            return "'" + byIdHotel.get().getName() + "' hotel does not have room with number: '" + roomNumber + "' !";
+            if (roomDTO.getFloor() != null) {
+                room.setFloor(roomDTO.getFloor());
+            }
+            if (roomDTO.getSize() != null) {
+                room.setSize(roomDTO.getSize());
+            }
+
+            roomRepository.save(room);
+            return "Room with id: '" + roomId + "' successfully edited !";
         }
-        return "Hotel with id: '" + hotelId + "' , not found !";
+        return "Room with id: '" + roomId + "' not found !";
     }
 
 
-    @DeleteMapping(value = "/deleteRoom/{hotelId}/{roomId}")
-    public String deleteRoom(@PathVariable Integer hotelId, @PathVariable Integer roomId) {
-        Optional<Hotel> byIdHotel = hotelRepository.findById(hotelId);
-        if (byIdHotel.isPresent()) {
-            if (roomRepository.existsByIdAndHotelId(roomId, hotelId)) {
-                roomRepository.deleteById(roomId);
-                return "'" + byIdHotel.get().getName() + "' hotel's room with id: '" + roomId + "' successfully deleted !";
-            }
-            return "'" + byIdHotel.get().getName() + "' hotel does not have room with id: '" + roomId + "' !";
+    @DeleteMapping(value = "/deleteRoom/{roomId}")
+    public String deleteRoom(@PathVariable Integer roomId) {
+        Optional<Room> byIdRoom = roomRepository.findById(roomId);
+        if (byIdRoom.isPresent()) {
+            Optional<Hotel> byIdHotel = hotelRepository.findById(byIdRoom.get().getHotel().getId());
+            roomRepository.deleteById(roomId);
+            return "'" + byIdHotel.get().getName() + "' hotel's room with id: '" + roomId + "' successfully deleted !";
         }
-        return "Hotel with id: '" + hotelId + "' not found !";
+        return "Room with id: '" + roomId + "' not found !";
     }
 
 }

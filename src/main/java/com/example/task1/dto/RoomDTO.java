@@ -12,11 +12,11 @@ public class RoomDTO {
     private Integer number;
     private Integer floor;
     private Integer size;
+    private Integer hotelId;
 
     public RoomDTO(Integer number, Integer floor, Integer size) {
         this.number = number;
         this.floor = floor;
         this.size = size;
-
     }
 }
